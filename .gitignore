@@ -1,0 +1,12 @@
+# Dependency directories
+node_modules/
+dist/
+
+# IDE files
+.vscode/
+.idea/
+
+# Compiled JavaScript
+*.js
+*.js.map
+
