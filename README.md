@@ -19,28 +19,34 @@ in the [Twilight article on Wikipedia](http://en.wikipedia.org/wiki/Twilight).
 
 ## Usage example
 
-```javascript
+```typescript
 // get today's sunlight times for London
-var times = SunCalc.getTimes(new Date(), 51.5, -0.1);
+const times = new SunCalc(new Date()).getTimes(51.5, -0.1);
 
 // format sunrise time from the Date object
-var sunriseStr = times.sunrise.getHours() + ':' + times.sunrise.getMinutes();
+const sunriseStr = times.sunrise.getHours() + ':' + times.sunrise.getMinutes();
 
 // get position of the sun (azimuth and altitude) at today's sunrise
-var sunrisePos = SunCalc.getPosition(times.sunrise, 51.5, -0.1);
+const sunrisePos = new SunCalc(times.sunrise).getPosition(51.5, -0.1);
 
 // get sunrise azimuth in degrees
-var sunriseAzimuth = sunrisePos.azimuth * 180 / Math.PI;
+const sunriseAzimuth = sunrisePos.azimuth * 180 / Math.PI;
 ```
 
 SunCalc is also available as an NPM package:
 
 ```bash
-$ npm install suncalc
+npm install @zonneplan/suncalc
+```
+```bash
+yarn add @zonneplan/suncalc
+```
+```bash
+bun install @zonneplan/suncalc
 ```
 
-```js
-var SunCalc = require('suncalc');
+```typescript
+import { SunCalc } from '@zonneplan/suncalc';
 ```
 
 
@@ -48,11 +54,11 @@ var SunCalc = require('suncalc');
 
 ### Sunlight times
 
-```javascript
-SunCalc.getTimes(/*Date*/ date, /*Number*/ latitude, /*Number*/ longitude, /*Number (default=0)*/ height)
+```typescript
+new SunCalc(date: Date).getTimes(latitude: number, longitude: number, height = 0): SolarTimes;
 ```
 
-Returns an object with the following properties (each is a `Date` object):
+Returns a `SolarTimes` object with the following properties (each is a `Date` object):
 
 | Property        | Description                                                              |
 | --------------- | ------------------------------------------------------------------------ |
@@ -71,22 +77,23 @@ Returns an object with the following properties (each is a `Date` object):
 | `nauticalDawn`  | nautical dawn (morning nautical twilight starts)                         |
 | `dawn`          | dawn (morning nautical twilight ends, morning civil twilight starts)     |
 
-```javascript
-SunCalc.addTime(/*Number*/ angleInDegrees, /*String*/ morningName, /*String*/ eveningName)
+```typescript
+SunCalc.addTime(angleInDegrees: number, morningName: SunCalcGlobal.MorningName, eveningName: SunCalcGlobal.EveningName): void;
 ```
 
 Adds a custom time when the sun reaches the given angle to results returned by `SunCalc.getTimes`.
 
 `SunCalc.times` property contains all currently defined times.
 
+Optionally, you can extend these times by overriding the namespace `SunCalcGlobal`.
 
 ### Sun position
 
-```javascript
-SunCalc.getPosition(/*Date*/ timeAndDate, /*Number*/ latitude, /*Number*/ longitude)
+```typescript
+new SunCalc(date: Date).getSolarPosition(latitude: number, longitude: number): SunPosition;
 ```
 
-Returns an object with the following properties:
+Returns a `SunPosition` object with the following properties:
 
  * `altitude`: sun altitude above the horizon in radians,
  e.g. `0` at the horizon and `PI/2` at the zenith (straight over your head)
@@ -96,11 +103,11 @@ Returns an object with the following properties:
 
 ### Moon position
 
-```javascript
-SunCalc.getMoonPosition(/*Date*/ timeAndDate, /*Number*/ latitude, /*Number*/ longitude)
+```typescript
+new SunCalc(date: Date).getMoonPosition(latitude: number, longitude: number): MoonPosition;
 ```
 
-Returns an object with the following properties:
+Returns a `MoonPosition` object with the following properties:
 
  * `altitude`: moon altitude above the horizon in radians
  * `azimuth`: moon azimuth in radians
@@ -110,11 +117,11 @@ Returns an object with the following properties:
 
 ### Moon illumination
 
-```javascript
-SunCalc.getMoonIllumination(/*Date*/ timeAndDate)
+```typescript
+new SunCalc(date: Date).getMoonIllumination(): MoonIllumination;
 ```
 
-Returns an object with the following properties:
+Returns a `MoonIllumination` object with the following properties:
 
  * `fraction`: illuminated fraction of the moon; varies from `0.0` (new moon) to `1.0` (full moon)
  * `phase`: moon phase; varies from `0.0` to `1.0`, described below
@@ -139,11 +146,11 @@ The zenith angle can be used do draw the moon shape from the observers perspecti
 
 ### Moon rise and set times
 
-```js
-SunCalc.getMoonTimes(/*Date*/ date, /*Number*/ latitude, /*Number*/ longitude[, inUTC])
+```typescript
+new SunCalc(date: Date).getMoonTimes(latitude: number, longitude: number, inUTC = false): MoonTimes;
 ```
 
-Returns an object with the following properties:
+Returns a `MoonTimes` object with the following properties:
 
  * `rise`: moonrise time as `Date`
  * `set`: moonset time as `Date`
@@ -154,6 +161,10 @@ By default, it will search for moon rise and set during local user's day (frou 0
 If `inUTC` is set to true, it will instead search the specified date from 0 to 24 UTC hours.
 
 ## Changelog
+
+#### 2.0.0 &mdash; Nov 7, 2023
+
+- Use TypeScript with modern syntax.
 
 #### 1.8.0 &mdash; Dec 22, 2016
 
