@@ -1,10 +1,10 @@
-import { MoonCoordinates } from './types/MoonCoordinates';
-import { MoonIllumination } from './types/MoonIllustration';
-import { MoonPosition } from './types/MoonPosition';
-import { MoonTimes } from './types/MoonTimes';
-import { SolarAngleName, SolarTimes } from './types/SolarTimes';
-import { SunCoordinates } from './types/SunCoordinates';
-import { SunPosition } from './types/SunPosition';
+import type { MoonCoordinates } from './types/MoonCoordinates';
+import type { MoonIllumination } from './types/MoonIllustration';
+import type { MoonPosition } from './types/MoonPosition';
+import type { MoonTimes } from './types/MoonTimes';
+import type { SolarAngleName, SolarTimes } from './types/SolarTimes';
+import type { SunCoordinates } from './types/SunCoordinates';
+import type { SunPosition } from './types/SunPosition';
 
 const dayMs = 1000 * 60 * 60 * 24;
 

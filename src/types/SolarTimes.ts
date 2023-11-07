@@ -4,10 +4,10 @@ export interface SolarAngleName {
   eveningName: SunCalcGlobal.EveningName;
 }
 
-export type SolarTimes = Record<
+export type SolarTimes<TDate = Date> = Record<
   SunCalcGlobal.MorningName | SunCalcGlobal.EveningName,
-  Date
+  TDate
 > & {
-  solarNoon: Date;
-  nadir: Date;
+  solarNoon: TDate;
+  nadir: TDate;
 };

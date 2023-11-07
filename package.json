@@ -17,23 +17,34 @@
   "author": "Vladimir Agafonkin",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mourner/suncalc.git"
+    "url": "git+https://github.com/zonneplan/suncalc.git"
   },
-  "main": "suncalc.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
+    "@jest/types": "^29.6.3",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.53.0",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.3",
+    "eslint-plugin-jest": "^27.6.0",
+    "jest": "^29.7.0",
+    "prettier": "^2.8.8",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
   "files": [
-    "suncalc.js"
+    "lib/**/*"
   ],
   "scripts": {
-    "pretest": "eslint suncalc.js test.js",
-    "test": "node test.js",
-    "prepublishOnly": "npm test"
+    "build": "tsc --project tsconfig.build.json",
+    "format": "prettier --write \"src/**/*.(js|ts)\"",
+    "lint": "eslint src --ext .js,.ts",
+    "lint:fix": "eslint src --fix --ext .js,.ts",
+    "test": "jest --config jest.config.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   }
 }
