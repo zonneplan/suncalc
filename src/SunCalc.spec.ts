@@ -12,7 +12,7 @@ const lng = 30.5;
 const height = 2000;
 
 it('getPosition returns azimuth and altitude for the given time and location', function () {
-  const sunPos = new SunCalc(date, lat, lng).getSolarPosition();
+  const sunPos = new SunCalc(date).getSolarPosition(lat, lng);
 
   expect(sunPos.azimuth).toBeCloseTo(-2.5003175907168385);
   expect(sunPos.altitude).toBeCloseTo(-0.7000406838781611);
@@ -36,7 +36,7 @@ it('getTimes returns sun phases for the given date and location', function () {
     goldenHour: '2013-03-05T15:02:52Z',
   };
 
-  const times = new SunCalc(date, lat, lng).getSolarTimes();
+  const times = new SunCalc(date).getSolarTimes(lat, lng);
 
   for (const key in testTimes) {
     const timeName = key as keyof typeof testTimes;
@@ -52,7 +52,7 @@ it('getTimes adjusts sun phases when additionally given the observer height', fu
     sunset: '2013-03-05T15:56:46Z',
   };
 
-  const times = new SunCalc(date, lat, lng).getSolarTimes(height);
+  const times = new SunCalc(date).getSolarTimes(lat, lng, height);
 
   for (const key in heightTestTimes) {
     const timeName = key as keyof typeof heightTestTimes;
@@ -61,7 +61,7 @@ it('getTimes adjusts sun phases when additionally given the observer height', fu
 });
 
 it('getMoonPosition returns moon position data given time and location', function () {
-  var moonPos = new SunCalc(date, lat, lng).getMoonPosition();
+  var moonPos = new SunCalc(date).getMoonPosition(lat, lng);
 
   expect(moonPos.azimuth).toBeCloseTo(-0.9783999522438226);
   expect(moonPos.altitude).toBeCloseTo(0.014551482243892251);
@@ -69,7 +69,7 @@ it('getMoonPosition returns moon position data given time and location', functio
 });
 
 it("getMoonIllumination returns fraction and angle of moon's illuminated limb and phase", function () {
-  const moonIllum = new SunCalc(date, lat, lng).getMoonIllumination();
+  const moonIllum = new SunCalc(date).getMoonIllumination();
 
   expect(moonIllum.fraction).toBeCloseTo(0.4848068202456373);
   expect(moonIllum.phase).toBeCloseTo(0.7548368838538762);
@@ -77,7 +77,7 @@ it("getMoonIllumination returns fraction and angle of moon's illuminated limb an
 });
 
 it('getMoonTimes returns moon rise and set times', function () {
-  const moonTimes = new SunCalc(new Date('2013-03-04UTC'), lat, lng).getMoonTimes(true);
+  const moonTimes = new SunCalc(new Date('2013-03-04UTC')).getMoonTimes(lat, lng, true);
 
   expect(moonTimes.rise?.toUTCString()).toBe('Mon, 04 Mar 2013 23:54:29 GMT');
   expect(moonTimes.set?.toUTCString()).toBe('Mon, 04 Mar 2013 07:47:58 GMT');

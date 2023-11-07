@@ -178,8 +178,6 @@ export class SunCalc {
 
   constructor(
     private readonly date: Date,
-    private readonly latitude: number,
-    private readonly longitude: number,
   ) {}
 
   public static addTime(
@@ -190,10 +188,10 @@ export class SunCalc {
     SunCalc.times.push({ angle, morningName, eveningName });
   }
 
-  public getSolarPosition(): SunPosition {
+  public getSolarPosition(latitude: number,longitude: number): SunPosition {
     const days = toDays(this.date);
-    const longitudeRadians = degToRad(-this.longitude);
-    const latitudeRadians = degToRad(this.latitude);
+    const longitudeRadians = degToRad(-longitude);
+    const latitudeRadians = degToRad(latitude);
     const sunCoordinates = sunCoords(days);
     const hourAngle =
       siderealTime(days, longitudeRadians) - sunCoordinates.rightAscension;
@@ -212,9 +210,9 @@ export class SunCalc {
     };
   }
 
-  public getSolarTimes(height = 0): SolarTimes {
-    const lw = degToRad(-this.longitude);
-    const phi = degToRad(this.latitude);
+  public getSolarTimes(latitude: number,longitude: number, height = 0): SolarTimes {
+    const lw = degToRad(-longitude);
+    const phi = degToRad(latitude);
     const days = toDays(this.date);
 
     const dh = observerAngle(height);
@@ -243,9 +241,9 @@ export class SunCalc {
     return result;
   }
 
-  public getMoonPosition(): MoonPosition {
-    const lw = degToRad(-this.longitude);
-    const phi = degToRad(this.latitude);
+  public getMoonPosition(latitude: number,longitude: number): MoonPosition {
+    const lw = degToRad(-longitude);
+    const phi = degToRad(latitude);
     const d = toDays(this.date);
     const { declination, distance, rightAscension } = moonCoords(d);
     const H = siderealTime(d, lw) - rightAscension;
@@ -306,7 +304,7 @@ export class SunCalc {
     };
   }
 
-  public getMoonTimes(inUTC = false): MoonTimes {
+  public getMoonTimes(latitude: number,longitude: number, inUTC = false): MoonTimes {
     const t = new Date(this.date);
 
     if (inUTC) {
@@ -316,7 +314,7 @@ export class SunCalc {
     }
 
     const hc = degToRad(0.133);
-    let h0 = this.withDate(t).getMoonPosition().altitude - hc;
+    let h0 = this.withDate(t).getMoonPosition(latitude, longitude).altitude - hc;
     let rise = 0;
     let set = 0;
     let x1 = 0;
@@ -326,10 +324,10 @@ export class SunCalc {
     // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
     for (let i = 1; i <= 24; i += 2) {
       const h1 =
-        this.withDate(hoursLater(t, i)).getMoonPosition().altitude - hc;
+        this.withDate(hoursLater(t, i)).getMoonPosition(latitude, longitude).altitude - hc;
 
       const h2 =
-        this.withDate(hoursLater(t, i + 1)).getMoonPosition().altitude - hc;
+        this.withDate(hoursLater(t, i + 1)).getMoonPosition(latitude, longitude).altitude - hc;
 
       const a = (h0 + h2) / 2 - h1;
       const b = (h2 - h0) / 2;
@@ -401,6 +399,6 @@ export class SunCalc {
   }
 
   private withDate(date: Date): SunCalc {
-    return new SunCalc(date, this.latitude, this.longitude);
+    return new SunCalc(date);
   }
 }
