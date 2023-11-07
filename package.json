@@ -46,5 +46,8 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
+  },
+  "publishConfig": {
+    "@zonneplan:registry": "https://npm.pkg.github.com/"
   }
 }
