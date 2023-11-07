@@ -61,7 +61,7 @@ it('getTimes adjusts sun phases when additionally given the observer height', fu
 });
 
 it('getMoonPosition returns moon position data given time and location', function () {
-  var moonPos = new SunCalc(date).getMoonPosition(lat, lng);
+  const moonPos = new SunCalc(date).getMoonPosition(lat, lng);
 
   expect(moonPos.azimuth).toBeCloseTo(-0.9783999522438226);
   expect(moonPos.altitude).toBeCloseTo(0.014551482243892251);
