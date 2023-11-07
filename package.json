@@ -1,8 +1,8 @@
 {
-  "name": "suncalc",
+  "name": "@zonneplan/suncalc",
   "version": "2.0.0",
   "description": "A tiny JavaScript library for calculating sun/moon positions and phases.",
-  "homepage": "https://github.com/mourner/suncalc",
+  "homepage": "https://github.com/zonneplan/suncalc",
   "keywords": [
     "sun",
     "astronomy",
