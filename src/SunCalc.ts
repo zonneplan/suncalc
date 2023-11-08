@@ -44,48 +44,25 @@ function solarMeanAnomaly(days: number): number {
 }
 
 function eclipticLongitude(M: number): number {
-  const equationOfCenter = degToRad(
-    1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M),
-  );
+  const equationOfCenter = degToRad(1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M));
 
   return M + equationOfCenter + perihelionOfEarth + Math.PI;
 }
 
-function calculateAzimuth(
-  hourAngle: number,
-  phi: number,
-  declination: number,
-): number {
-  return Math.atan2(
-    Math.sin(hourAngle),
-    Math.cos(hourAngle) * Math.sin(phi) - Math.tan(declination) * Math.cos(phi),
-  );
+function calculateAzimuth(hourAngle: number, phi: number, declination: number): number {
+  return Math.atan2(Math.sin(hourAngle), Math.cos(hourAngle) * Math.sin(phi) - Math.tan(declination) * Math.cos(phi));
 }
 
-function calculateAltitude(
-  hourAngle: number,
-  phi: number,
-  declination: number,
-): number {
-  return Math.asin(
-    Math.sin(phi) * Math.sin(declination) +
-      Math.cos(phi) * Math.cos(declination) * Math.cos(hourAngle),
-  );
+function calculateAltitude(hourAngle: number, phi: number, declination: number): number {
+  return Math.asin(Math.sin(phi) * Math.sin(declination) + Math.cos(phi) * Math.cos(declination) * Math.cos(hourAngle));
 }
 
 function calculateRightAscension(l: number, b: number): number {
-  return Math.atan2(
-    Math.sin(l) * Math.cos(obliquityOfEarth) -
-      Math.tan(b) * Math.sin(obliquityOfEarth),
-    Math.cos(l),
-  );
+  return Math.atan2(Math.sin(l) * Math.cos(obliquityOfEarth) - Math.tan(b) * Math.sin(obliquityOfEarth), Math.cos(l));
 }
 
 function calculateDeclination(l: number, b: number): number {
-  return Math.asin(
-    Math.sin(b) * Math.cos(obliquityOfEarth) +
-      Math.cos(b) * Math.sin(obliquityOfEarth) * Math.sin(l),
-  );
+  return Math.asin(Math.sin(b) * Math.cos(obliquityOfEarth) + Math.cos(b) * Math.sin(obliquityOfEarth) * Math.sin(l));
 }
 
 function sunCoords(days: number): SunCoordinates {
@@ -110,24 +87,14 @@ function solarTransitJ(ds: number, M: number, L: number): number {
 }
 
 function hourAngle(h: number, phi: number, d: number): number {
-  return Math.acos(
-    (Math.sin(h) - Math.sin(phi) * Math.sin(d)) / (Math.cos(phi) * Math.cos(d)),
-  );
+  return Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(d)) / (Math.cos(phi) * Math.cos(d)));
 }
 
 function observerAngle(height: number): number {
   return (-2.076 * Math.sqrt(height)) / 60;
 }
 
-function getSetJ(
-  h: number,
-  lw: number,
-  phi: number,
-  dec: number,
-  n: number,
-  M: number,
-  L: number,
-): number {
+function getSetJ(h: number, lw: number, phi: number, dec: number, n: number, M: number, L: number): number {
   const w = hourAngle(h, phi, dec);
   const a = approxTransit(w, lw, n);
 
@@ -176,9 +143,7 @@ export class SunCalc {
     { angle: 6, morningName: 'goldenHourEnd', eveningName: 'goldenHour' },
   ];
 
-  constructor(
-    private readonly date: Date,
-  ) {}
+  constructor(private readonly date: Date) {}
 
   public static addTime(
     angle: number,
@@ -188,29 +153,20 @@ export class SunCalc {
     SunCalc.times.push({ angle, morningName, eveningName });
   }
 
-  public getSolarPosition(latitude: number,longitude: number): SunPosition {
+  public getSolarPosition(latitude: number, longitude: number): SunPosition {
     const days = toDays(this.date);
     const longitudeRadians = degToRad(-longitude);
     const latitudeRadians = degToRad(latitude);
     const sunCoordinates = sunCoords(days);
-    const hourAngle =
-      siderealTime(days, longitudeRadians) - sunCoordinates.rightAscension;
+    const hourAngle = siderealTime(days, longitudeRadians) - sunCoordinates.rightAscension;
 
     return {
-      azimuth: calculateAzimuth(
-        hourAngle,
-        latitudeRadians,
-        sunCoordinates.declination,
-      ),
-      altitude: calculateAltitude(
-        hourAngle,
-        latitudeRadians,
-        sunCoordinates.declination,
-      ),
+      azimuth: calculateAzimuth(hourAngle, latitudeRadians, sunCoordinates.declination),
+      altitude: calculateAltitude(hourAngle, latitudeRadians, sunCoordinates.declination),
     };
   }
 
-  public getSolarTimes(latitude: number,longitude: number, height = 0): SolarTimes {
+  public getSolarTimes(latitude: number, longitude: number, height = 0): SolarTimes {
     const lw = degToRad(-longitude);
     const phi = degToRad(latitude);
     const days = toDays(this.date);
@@ -241,7 +197,7 @@ export class SunCalc {
     return result;
   }
 
-  public getMoonPosition(latitude: number,longitude: number): MoonPosition {
+  public getMoonPosition(latitude: number, longitude: number): MoonPosition {
     const lw = degToRad(-longitude);
     const phi = degToRad(latitude);
     const d = toDays(this.date);
@@ -253,8 +209,7 @@ export class SunCalc {
     // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
     const parallacticAngle = Math.atan2(
       Math.sin(H),
-      Math.tan(phi) * Math.cos(declination) -
-        Math.sin(declination) * Math.cos(H),
+      Math.tan(phi) * Math.cos(declination) - Math.sin(declination) * Math.cos(H),
     );
 
     altitude += astroRefraction(altitude); // altitude correction for refraction
@@ -279,22 +234,15 @@ export class SunCalc {
 
     const phi = Math.acos(
       Math.sin(s.declination) * Math.sin(m.declination) +
-        Math.cos(s.declination) *
-          Math.cos(m.declination) *
-          Math.cos(s.rightAscension - m.rightAscension),
+        Math.cos(s.declination) * Math.cos(m.declination) * Math.cos(s.rightAscension - m.rightAscension),
     );
 
-    const inc = Math.atan2(
-      distanceToSun * Math.sin(phi),
-      m.distance - distanceToSun * Math.cos(phi),
-    );
+    const inc = Math.atan2(distanceToSun * Math.sin(phi), m.distance - distanceToSun * Math.cos(phi));
 
     const angle = Math.atan2(
       Math.cos(s.declination) * Math.sin(s.rightAscension - m.rightAscension),
       Math.sin(s.declination) * Math.cos(m.declination) -
-        Math.cos(s.declination) *
-          Math.sin(m.declination) *
-          Math.cos(s.rightAscension - m.rightAscension),
+        Math.cos(s.declination) * Math.sin(m.declination) * Math.cos(s.rightAscension - m.rightAscension),
     );
 
     return {
@@ -304,7 +252,7 @@ export class SunCalc {
     };
   }
 
-  public getMoonTimes(latitude: number,longitude: number, inUTC = false): MoonTimes {
+  public getMoonTimes(latitude: number, longitude: number, inUTC = false): MoonTimes {
     const t = new Date(this.date);
 
     if (inUTC) {
@@ -314,7 +262,7 @@ export class SunCalc {
     }
 
     const hc = degToRad(0.133);
-    let h0 = this.withDate(t).getMoonPosition(latitude, longitude).altitude - hc;
+    let h0 = new SunCalc(t).getMoonPosition(latitude, longitude).altitude - hc;
     let rise = 0;
     let set = 0;
     let x1 = 0;
@@ -323,11 +271,9 @@ export class SunCalc {
 
     // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
     for (let i = 1; i <= 24; i += 2) {
-      const h1 =
-        this.withDate(hoursLater(t, i)).getMoonPosition(latitude, longitude).altitude - hc;
+      const h1 = new SunCalc(hoursLater(t, i)).getMoonPosition(latitude, longitude).altitude - hc;
 
-      const h2 =
-        this.withDate(hoursLater(t, i + 1)).getMoonPosition(latitude, longitude).altitude - hc;
+      const h2 = new SunCalc(hoursLater(t, i + 1)).getMoonPosition(latitude, longitude).altitude - hc;
 
       const a = (h0 + h2) / 2 - h1;
       const b = (h2 - h0) / 2;
@@ -396,9 +342,5 @@ export class SunCalc {
     }
 
     return result;
-  }
-
-  private withDate(date: Date): SunCalc {
-    return new SunCalc(date);
   }
 }
