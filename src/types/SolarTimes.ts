@@ -3,12 +3,17 @@ export type SolarEveningName = 'sunset' | 'sunsetStart' | 'dusk' | 'nauticalDusk
 
 export interface SolarAngleName {
   angle: number;
-  morningName: SolarMorningName | SunCalcGlobal.MorningName;
-  eveningName: SolarEveningName | SunCalcGlobal.EveningName;
+  morningName: SolarMorningName;
+  eveningName: SolarEveningName;
 }
 
-export type SolarTimes<TDate = Date> = Record<SolarMorningName | SolarEveningName, TDate> &
-  Record<SunCalcGlobal.MorningName | SunCalcGlobal.EveningName, TDate> & {
-    solarNoon: TDate;
-    nadir: TDate;
-  };
+export interface CustomSolarAngleName {
+  angle: number;
+  morningName: string;
+  eveningName: string;
+}
+
+export type SolarTimes<TDate = Date> = Record<SolarMorningName | SolarEveningName, TDate> & {
+  solarNoon: TDate;
+  nadir: TDate;
+};

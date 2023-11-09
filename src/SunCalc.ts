@@ -2,7 +2,7 @@ import type { MoonCoordinates } from './types/MoonCoordinates';
 import type { MoonIllumination } from './types/MoonIllustration';
 import type { MoonPosition } from './types/MoonPosition';
 import type { MoonTimes } from './types/MoonTimes';
-import type { SolarAngleName, SolarTimes } from './types/SolarTimes';
+import type { CustomSolarAngleName, SolarAngleName, SolarTimes } from './types/SolarTimes';
 import type { SunCoordinates } from './types/SunCoordinates';
 import type { SunPosition } from './types/SunPosition';
 
@@ -134,7 +134,7 @@ function hoursLater(date: Date, hours = 1): Date {
 }
 
 export class SunCalc {
-  private static times: SolarAngleName[] = [
+  private static times: (SolarAngleName | CustomSolarAngleName)[] = [
     { angle: -0.833, morningName: 'sunrise', eveningName: 'sunset' },
     { angle: -0.3, morningName: 'sunriseEnd', eveningName: 'sunsetStart' },
     { angle: -6, morningName: 'dawn', eveningName: 'dusk' },
@@ -145,11 +145,7 @@ export class SunCalc {
 
   constructor(private readonly date: Date) {}
 
-  public static addTime(
-    angle: number,
-    morningName: SunCalcGlobal.MorningName,
-    eveningName: SunCalcGlobal.EveningName,
-  ): void {
+  public static addTime(angle: number, morningName: string, eveningName: string): void {
     SunCalc.times.push({ angle, morningName, eveningName });
   }
 
@@ -166,7 +162,11 @@ export class SunCalc {
     };
   }
 
-  public getSolarTimes(latitude: number, longitude: number, height = 0): SolarTimes {
+  public getSolarTimes<TAdditionalKeys extends string | never = never>(
+    latitude: number,
+    longitude: number,
+    height = 0,
+  ): SolarTimes & Record<TAdditionalKeys, Date> {
     const lw = degToRad(-longitude);
     const phi = degToRad(latitude);
     const days = toDays(this.date);
@@ -182,7 +182,7 @@ export class SunCalc {
     const result = {
       solarNoon: fromJulian(Jnoon),
       nadir: fromJulian(Jnoon - 0.5),
-    } as SolarTimes;
+    } as SolarTimes & Record<TAdditionalKeys, Date>;
 
     for (const { angle, morningName, eveningName } of SunCalc.times) {
       const h0 = degToRad(angle + dh);
@@ -190,8 +190,8 @@ export class SunCalc {
       const Jset = getSetJ(h0, lw, phi, dec, n, M, L);
       const Jrise = Jnoon - (Jset - Jnoon);
 
-      result[morningName] = fromJulian(Jrise);
-      result[eveningName] = fromJulian(Jset);
+      result[morningName as keyof SolarTimes] = fromJulian(Jrise);
+      result[eveningName as keyof SolarTimes] = fromJulian(Jset);
     }
 
     return result;
